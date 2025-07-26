@@ -114,8 +114,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8 max-w-xl">
         {/* User Account Section */}
         <div className="flex justify-end mb-4">
           {user ? (

@@ -67,9 +67,11 @@ export function AICustomizer({ onRecipeGenerated, category, user, accessToken }:
 
       const normalizedPreferences = preferences.trim().toLowerCase();
       
-      // Test the function first, then use AI service
-      console.log('Testing Supabase Edge Function...');
+      // Temporarily skip API call due to CORS issue - fix function first
+      console.log('Skipping API call due to CORS issue, using enhanced fallback');
       
+      /*
+      // Uncomment when CORS is fixed in your Supabase Edge Function
       try {
         const functionUrl = `https://jvjqfolccxfryxkepnbf.supabase.co/functions/v1/make-server-69bb737c`;
         
@@ -118,6 +120,7 @@ export function AICustomizer({ onRecipeGenerated, category, user, accessToken }:
         console.error('API call failed:', apiError);
         console.log('Falling back to enhanced custom recipe');
       }
+      */
       
       // Fallback: Create an enhanced custom recipe based on preferences
       const customRecipe: CoffeeRecipe = {

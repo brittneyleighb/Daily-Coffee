@@ -2,23 +2,24 @@
   "name": "daily-coffee",
   "version": "1.0.0",
   "description": "A daily coffee and espresso recipe app",
-  "main": "index.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/brittneyleighb/Daily-Coffee.git"
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "^0.268.0",
+    "@supabase/supabase-js": "^2.49.8"
   },
-  "keywords": [
-    "coffee",
-    "espresso",
-    "recipes",
-    "react"
-  ],
+  "devDependencies": {
+    "vite": "^4.4.9",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^5.2.2"
+  },
   "author": "Brittney Leigh",
+<<<<<<< HEAD
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/brittneyleighb/Daily-Coffee/issues"
@@ -31,5 +32,8 @@
   "devDependencies": {
     "vite": "^5.0.0"
   }
+=======
+  "license": "MIT"
+>>>>>>> 8f1819e (Ready for deployment)
 }
 

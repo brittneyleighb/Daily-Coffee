@@ -20,36 +20,24 @@ export function AICustomizer({ onRecipeGenerated, category, user, accessToken }:
   const [showPanel, setShowPanel] = useState(false);
   const [error, setError] = useState("");
 
-  // Helper function to enhance description based on preferences
-  const enhanceDescriptionWithPreferences = (baseDescription: string, preferences: string): string => {
-    const preferenceWords = preferences.toLowerCase().split(' ');
-    let enhancement = '';
-    
-    if (preferenceWords.some(word => ['strong', 'bold', 'intense'].includes(word))) {
-      enhancement = ' This bold preparation will deliver a rich, intense flavor profile.';
-    } else if (preferenceWords.some(word => ['light', 'mild', 'gentle', 'fruity'].includes(word))) {
-      enhancement = ' This lighter approach highlights delicate, nuanced flavors.';
-    } else if (preferenceWords.some(word => ['sweet', 'smooth', 'creamy'].includes(word))) {
-      enhancement = ' Prepared to emphasize sweetness and smooth texture.';
-    } else {
-      enhancement = ` Customized for your preference: ${preferences}.`;
+  const enhanceDescription = (description: string, preferences: string) => {
+    const lower = preferences.toLowerCase();
+    if (lower.includes("bold") || lower.includes("strong")) {
+      return description + " This bold preparation delivers a deep, rich intensity.";
+    } else if (lower.includes("light") || lower.includes("fruity")) {
+      return description + " Expect a light, bright flavor with fruity undertones.";
+    } else if (lower.includes("sweet") || lower.includes("creamy")) {
+      return description + " A smooth and sweet flavor tailored for your craving.";
     }
-    
-    return baseDescription + enhancement;
+    return description + ` Customized based on your preference: ${preferences}.`;
   };
 
-  // Helper function to get appropriate tag based on preferences
-  const getPreferenceTag = (preferences: string): string => {
-    const preferenceWords = preferences.toLowerCase().split(' ');
-    
-    if (preferenceWords.some(word => ['strong', 'bold', 'intense'].includes(word))) {
-      return 'bold';
-    } else if (preferenceWords.some(word => ['light', 'mild', 'gentle', 'fruity'].includes(word))) {
-      return 'light';
-    } else if (preferenceWords.some(word => ['sweet', 'smooth', 'creamy'].includes(word))) {
-      return 'smooth';
-    }
-    return 'custom';
+  const getTagFromPreference = (pref: string) => {
+    const lower = pref.toLowerCase();
+    if (lower.includes("bold") || lower.includes("strong")) return "bold";
+    if (lower.includes("light") || lower.includes("fruity")) return "light";
+    if (lower.includes("sweet") || lower.includes("creamy")) return "smooth";
+    return "custom";
   };
 
   const generateCustomRecipe = async () => {
@@ -57,94 +45,51 @@ export function AICustomizer({ onRecipeGenerated, category, user, accessToken }:
     setError("");
 
     try {
-      // Import base recipes
-      const baseRecipes = await import('../data/Coffee-Recipes');
+      const baseRecipes = await import("../data/Coffee-Recipes");
       const baseRecipe = baseRecipes.getRandomRecipe(category);
-
-      if (!baseRecipe) {
-        throw new Error('Failed to load base recipe');
-      }
-
       const normalizedPreferences = preferences.trim().toLowerCase();
-      
-      // Temporarily skip API call due to CORS issue - fix function first
-      console.log('Skipping API call due to CORS issue, using enhanced fallback');
-      
-      /*
-      // Uncomment when CORS is fixed in your Supabase Edge Function
-      try {
-        const functionUrl = `https://jvjqfolccxfryxkepnbf.supabase.co/functions/v1/make-server-69bb737c`;
-        
-        console.log('Making request to:', functionUrl);
-        console.log('Request payload:', { preferences: normalizedPreferences, category, baseRecipe });
 
-        const response = await fetch(functionUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken || publicAnonKey}`,
-            // Add CORS headers just in case
-            'Origin': window.location.origin
-          },
-          body: JSON.stringify({
-            preferences: normalizedPreferences,
-            category,
-            baseRecipe
-          })
-        });
+      const functionUrl = `https://${projectId}.supabase.co/functions/v1/make-server-69bb737c`;
 
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
+      const response = await fetch(functionUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken || publicAnonKey}`,
+          "Origin": window.location.origin
+        },
+        body: JSON.stringify({
+          preferences: normalizedPreferences,
+          category,
+          baseRecipe
+        })
+      });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('API Error Response:', errorText);
-          throw new Error(`API request failed with status ${response.status}: ${errorText}`);
-        }
-
-        const result = await response.json();
-        console.log('Parsed response:', result);
-
-        if (result && result.success && result.recipe) {
-          onRecipeGenerated(result.recipe);
-          setPreferences("");
-          setShowPanel(false);
-          return; // Success - exit early
-        } else {
-          console.warn('AI service returned invalid response, using fallback');
-          if (result?.error) {
-            console.error('API error:', result.error);
-          }
-        }
-      } catch (apiError) {
-        console.error('API call failed:', apiError);
-        console.log('Falling back to enhanced custom recipe');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API error: ${response.status} ${errorText}`);
       }
-      */
-      
-      // Fallback: Create an enhanced custom recipe based on preferences
-      const customRecipe: CoffeeRecipe = {
-        ...baseRecipe,
-        id: `custom-${Date.now()}`,
-        name: `Custom ${baseRecipe.name}`,
-        description: enhanceDescriptionWithPreferences(baseRecipe.description, normalizedPreferences),
-        tags: [...(baseRecipe.tags || []), 'custom', getPreferenceTag(normalizedPreferences)]
-      };
-      
-      onRecipeGenerated(customRecipe);
+
+      const result = await response.json();
+      if (result?.success && result.recipe) {
+        onRecipeGenerated(result.recipe);
+      } else {
+        // fallback with enhanced description
+        const fallbackRecipe: CoffeeRecipe = {
+          ...baseRecipe,
+          id: `custom-${Date.now()}`,
+          name: `Custom ${baseRecipe.name}`,
+          description: enhanceDescription(baseRecipe.description, normalizedPreferences),
+          tags: [...(baseRecipe.tags || []), "ai", "custom", getTagFromPreference(normalizedPreferences)]
+        };
+        onRecipeGenerated(fallbackRecipe);
+      }
+
       setPreferences("");
       setShowPanel(false);
-    } catch (error) {
-      console.error('Error generating custom recipe:', error);
-      
-      // Provide more specific error messages
-      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        setError('Network error: Unable to connect to the AI service. Please check your connection and try again.');
-      } else if (error instanceof Error) {
-        setError(`Failed to generate custom recipe: ${error.message}`);
-      } else {
-        setError('Failed to generate custom recipe. Please try again.');
-      }
+    } catch (err: any) {
+      console.error("AI generation error:", err);
+      setError(err.message || "Failed to generate custom recipe. Please try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -164,7 +109,7 @@ export function AICustomizer({ onRecipeGenerated, category, user, accessToken }:
             AI Custom Recipe
           </Button>
           <p className="text-sm text-muted-foreground mt-2">
-            Get a personalized {category === 'brewing' ? 'brewing method' : 'espresso drink'} recipe
+            Get a personalized {category === "brewing" ? "brewing method" : "espresso drink"} recipe
           </p>
         </div>
       ) : (
@@ -211,7 +156,7 @@ export function AICustomizer({ onRecipeGenerated, category, user, accessToken }:
                 ) : (
                   <Sparkles className="w-4 h-4" />
                 )}
-                {isGenerating ? 'Generating...' : 'Generate Recipe'}
+                {isGenerating ? "Generating..." : "Generate Recipe"}
               </Button>
               <Button
                 variant="outline"

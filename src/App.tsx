@@ -114,8 +114,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-xs">
+    <div className="min-h-screen bg-gray-100 py-10 px-4">
+      <div className="max-w-md mx-auto">
         {/* User Account Section */}
         <div className="flex justify-end mb-4">
           {user ? (
@@ -144,19 +144,21 @@ export default function App() {
           )}
         </div>
 
-        <DailyHeader category={activeCategory} />
-        
-        <CategoryToggle 
-          activeCategory={activeCategory}
-          onCategoryChange={handleCategoryChange}
-        />
+        <div className="flex flex-col items-center space-y-6">
+          <DailyHeader category={activeCategory} />
+          
+          <CategoryToggle 
+            activeCategory={activeCategory}
+            onCategoryChange={handleCategoryChange}
+          />
 
-        <AICustomizer 
-          onRecipeGenerated={handleAIRecipeGenerated}
-          category={activeCategory}
-          user={user}
-          accessToken={accessToken}
-        />
+          <AICustomizer 
+            onRecipeGenerated={handleAIRecipeGenerated}
+            category={activeCategory}
+            user={user}
+            accessToken={accessToken}
+          />
+        </div>
 
         {isCustomRecipe && (
           <div className="flex justify-center gap-2 mb-6">
@@ -181,12 +183,16 @@ export default function App() {
           </div>
         )}
 
-        <DailyRecipeCard 
-          recipe={currentRecipe} 
-          user={user}
-          accessToken={accessToken}
-          onAuthRequired={() => setShowAuthModal(true)}
-        />
+        <div className="flex justify-center px-4">
+          <div className="w-full max-w-md">
+            <DailyRecipeCard 
+              recipe={currentRecipe} 
+              user={user}
+              accessToken={accessToken}
+              onAuthRequired={() => setShowAuthModal(true)}
+            />
+          </div>
+        </div>
         
         {/* Enhanced Footer */}
         <div className="text-center mt-12 space-y-2">

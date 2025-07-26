@@ -57,13 +57,14 @@ export default function App() {
 
   const loadUserFavorites = async (token: string) => {
     try {
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-69bb737c/favorites`, {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_FUNCTION_URL}/make-server-69bb737c/favorites`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_FUNCTION_URL}/make-server-69bb737c/favorites`, {
+
+      const result = await response.json();
+
       if (result.success) {
         setFavorites(result.favorites);
       }
@@ -210,9 +211,4 @@ export default function App() {
       </div>
     </div>
   );
-}// src/App.tsx
-import React from 'react';
-
-export default function App() {
-  return <div>Hello, Daily Coffee!</div>;
 }

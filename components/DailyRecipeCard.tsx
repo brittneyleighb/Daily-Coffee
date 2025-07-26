@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card } from "./UI/Card";
+// import { Card } from "./UI/Card";
 import { Badge } from "./UI/Badge";
 import { Button } from "./UI/Button";
 import { Clock, Heart, Share2 } from "lucide-react";
@@ -85,7 +85,7 @@ export function DailyRecipeCard({ recipe, user, accessToken, onAuthRequired }: D
   };
 
   return (
-    <Card className="w-full p-6">
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 w-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
@@ -188,6 +188,6 @@ export function DailyRecipeCard({ recipe, user, accessToken, onAuthRequired }: D
           </p>
         </div>
       )}
-    </Card>
+    </div>
   );
 }

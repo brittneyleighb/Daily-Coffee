@@ -4,15 +4,15 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+} from "./UI/Dialog";
+import { Button } from "./UI/Button";
+import { Input } from "./UI/Input";
+import { Label } from "./UI/Label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./UI/Tabs";
 import { User, Mail, Lock, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "./ui/alert";
-import { supabase } from "../utils/supabase/client";
-import { projectId, publicAnonKey } from "../utils/supabase/info";
+import { Alert, AlertDescription } from "./UI/Alert";
+import { supabase } from "../supabase-utils/client";
+import { projectId, publicAnonKey } from "../supabase-utils/info";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -29,115 +29,84 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
     password: "",
   });
 
-  const handleSignup = async () => {
-    setIsLoading(true);
-    setError("");
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    setError(""); // Clear error when user starts typing
+  };
 
-    const cleanedEmail = formData.email.trim();
-    const cleanedName = formData.name.trim();
-    const cleanedPassword = formData.password;
-
-    if (cleanedPassword.length < 6) {
-      setError("Password must be at least 6 characters");
-      setIsLoading(false);
+  const handleSignUp = async () => {
+    if (!formData.email || !formData.password || !formData.name) {
+      setError("All fields are required");
       return;
     }
 
-    try {
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-69bb737c/signup`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${publicAnonKey}`,
-          },
-          body: JSON.stringify({
-            email: cleanedEmail,
-            password: cleanedPassword,
-            name: cleanedName,
-          }),
-        }
-      );
-
-      const result = await response.json();
-
-      if (!result.success) {
-        setError(result.error || "Signup failed");
-        return;
-      }
-
-      const { data, error: signInError } =
-        await supabase.auth.signInWithPassword({
-          email: cleanedEmail,
-          password: cleanedPassword,
-        });
-
-      if (signInError) {
-        setError(signInError.message);
-        return;
-      }
-
-      onAuthSuccess(data.user, data.session.access_token);
-      handleClose();
-    } catch (err) {
-      console.error("Signup error:", err);
-      setError("An unexpected error occurred");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSignin = async () => {
     setIsLoading(true);
     setError("");
 
-    const cleanedEmail = formData.email.trim();
-    const cleanedPassword = formData.password;
-
     try {
-      const { data, error: signInError } =
-        await supabase.auth.signInWithPassword({
-          email: cleanedEmail,
-          password: cleanedPassword,
-        });
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            name: formData.name,
+          },
+        },
+      });
 
-      if (signInError) {
-        setError(signInError.message);
-        return;
+      if (error) {
+        setError(error.message);
+      } else if (data.user && data.session) {
+        onAuthSuccess(data.user, data.session.access_token);
+        onClose();
+      } else {
+        setError("Please check your email to confirm your account");
       }
-
-      onAuthSuccess(data.user, data.session.access_token);
-      handleClose();
-    } catch (err) {
-      console.error("Signin error:", err);
+    } catch (error) {
       setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const handleSignIn = async () => {
+    if (!formData.email || !formData.password) {
+      setError("Email and password are required");
+      return;
+    }
+
+    setIsLoading(true);
     setError("");
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (error) {
+        setError(error.message);
+      } else if (data.user && data.session) {
+        onAuthSuccess(data.user, data.session.access_token);
+        onClose();
+      }
+    } catch (error) {
+      setError("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleClose = () => {
-    onClose();
-    setError("");
+  const resetForm = () => {
     setFormData({ name: "", email: "", password: "" });
+    setError("");
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) { onClose(); resetForm(); } }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <User className="w-5 h-5" /> Welcome to Coffee Craft
-          </DialogTitle>
+          <DialogTitle className="text-center">Welcome to Daily Coffee</DialogTitle>
         </DialogHeader>
 
         <Tabs defaultValue="signin" className="w-full">
@@ -147,7 +116,7 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
           </TabsList>
 
           {error && (
-            <Alert variant="destructive" className="mt-4" aria-live="polite">
+            <Alert variant="destructive" className="mt-4">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
@@ -162,9 +131,9 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
                   id="signin-email"
                   type="email"
                   placeholder="your@email.com"
-                  className="pl-10"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
+                  className="pl-10"
                 />
               </div>
             </div>
@@ -177,19 +146,19 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
                   id="signin-password"
                   type="password"
                   placeholder="••••••••"
-                  className="pl-10"
                   value={formData.password}
                   onChange={(e) => handleInputChange("password", e.target.value)}
+                  className="pl-10"
                 />
               </div>
             </div>
 
             <Button
-              onClick={handleSignin}
-              disabled={isLoading || !formData.email || !formData.password}
+              onClick={handleSignIn}
+              disabled={isLoading}
               className="w-full"
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? "Signing In..." : "Sign In"}
             </Button>
           </TabsContent>
 
@@ -197,4 +166,62 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
             <div className="space-y-2">
               <Label htmlFor="signup-name">Name</Label>
               <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-muted
+                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="signup-name"
+                  type="text"
+                  placeholder="Your Name"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="signup-email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="signup-email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="signup-password">Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="signup-password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
+            <Button
+              onClick={handleSignUp}
+              disabled={isLoading}
+              className="w-full"
+            >
+              {isLoading ? "Creating Account..." : "Create Account"}
+            </Button>
+          </TabsContent>
+        </Tabs>
+
+        <div className="text-center text-sm text-muted-foreground mt-4">
+          Save your favorite recipes and get personalized recommendations
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

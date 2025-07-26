@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Card } from "./ui/card";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
+import { Card } from "./UI/Card";
+import { Badge } from "./UI/Badge";
+import { Button } from "./UI/Button";
 import { Clock, Heart, Share2 } from "lucide-react";
-import { CoffeeIcon } from "./CoffeeIcons";
-import { CoffeeRecipe } from "../data/coffeeRecipes";
-import { projectId } from "../utils/supabase/info";
+import { CoffeeIcon } from "./Coffee-Icons";
+import { CoffeeRecipe } from "../data/Coffee-Recipes";
+import { projectId } from "../supabase-utils/info";
 
 interface DailyRecipeCardProps {
   recipe: CoffeeRecipe;

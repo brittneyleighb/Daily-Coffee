@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { DailyHeader } from "./components/DailyHeader";
-import { DailyRecipeCard } from "./components/DailyRecipeCard";
-import { CategoryToggle } from "./components/CategoryToggle";
-import { AICustomizer } from "./components/AICustomizer";
-import { AuthModal } from "./components/AuthModal";
-import { getTodaysRecipe, CoffeeRecipe, getRecipesByCategory } from "./data/coffeeRecipes";
-import { Button } from "./components/ui/button";
+import { DailyHeader } from "../components/Daily-Header";
+import { DailyRecipeCard } from "../components/Daily-Recipe-Card";
+import { CategoryToggle } from "../components/Category-Toggle";
+import { AICustomizer } from "../components/AI-Customizer";
+import { AuthModal } from "../components/Auth-Modal";
+import { getTodaysRecipe, CoffeeRecipe, getRecipesByCategory } from "../data/Coffee-Recipes";
+import { Button } from "../components/UI/Button";
 import { Dice6, Calendar, User, LogOut, Heart } from "lucide-react";
-import { supabase } from "./utils/supabase/client";
+import { supabase } from "../supabase-utils/client";
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState<'brewing' | 'espresso'>('brewing');

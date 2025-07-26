@@ -20,51 +20,128 @@ export function AICustomizer({ onRecipeGenerated, category, user, accessToken }:
   const [showPanel, setShowPanel] = useState(false);
   const [error, setError] = useState("");
 
+  // Helper function to enhance description based on preferences
+  const enhanceDescriptionWithPreferences = (baseDescription: string, preferences: string): string => {
+    const preferenceWords = preferences.toLowerCase().split(' ');
+    let enhancement = '';
+    
+    if (preferenceWords.some(word => ['strong', 'bold', 'intense'].includes(word))) {
+      enhancement = ' This bold preparation will deliver a rich, intense flavor profile.';
+    } else if (preferenceWords.some(word => ['light', 'mild', 'gentle', 'fruity'].includes(word))) {
+      enhancement = ' This lighter approach highlights delicate, nuanced flavors.';
+    } else if (preferenceWords.some(word => ['sweet', 'smooth', 'creamy'].includes(word))) {
+      enhancement = ' Prepared to emphasize sweetness and smooth texture.';
+    } else {
+      enhancement = ` Customized for your preference: ${preferences}.`;
+    }
+    
+    return baseDescription + enhancement;
+  };
+
+  // Helper function to get appropriate tag based on preferences
+  const getPreferenceTag = (preferences: string): string => {
+    const preferenceWords = preferences.toLowerCase().split(' ');
+    
+    if (preferenceWords.some(word => ['strong', 'bold', 'intense'].includes(word))) {
+      return 'bold';
+    } else if (preferenceWords.some(word => ['light', 'mild', 'gentle', 'fruity'].includes(word))) {
+      return 'light';
+    } else if (preferenceWords.some(word => ['sweet', 'smooth', 'creamy'].includes(word))) {
+      return 'smooth';
+    }
+    return 'custom';
+  };
+
   const generateCustomRecipe = async () => {
     setIsGenerating(true);
     setError("");
 
     try {
+      // Import base recipes
       const baseRecipes = await import('../data/Coffee-Recipes');
       const baseRecipe = baseRecipes.getRandomRecipe(category);
 
-      const normalizedPreferences = preferences.trim().toLowerCase();
-
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-69bb737c`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken || publicAnonKey}`
-        },
-        body: JSON.stringify({
-          preferences: normalizedPreferences,
-          category,
-          baseRecipe
-        })
-      });
-
-      const result = await response.json();
-
-      if (result.success && result.recipe) {
-        onRecipeGenerated(result.recipe);
-        setPreferences("");
-        setShowPanel(false);
-      } else {
-        // Fallback to modified base recipe if AI generation fails
-        const customRecipe: CoffeeRecipe = {
-          ...baseRecipe,
-          id: `custom-${Date.now()}`,
-          name: `Custom ${baseRecipe.name}`,
-          description: `${baseRecipe.description} - Customized for your preferences: ${preferences}`,
-          tags: [...baseRecipe.tags, 'custom', 'ai-generated']
-        };
-        onRecipeGenerated(customRecipe);
-        setPreferences("");
-        setShowPanel(false);
+      if (!baseRecipe) {
+        throw new Error('Failed to load base recipe');
       }
+
+      const normalizedPreferences = preferences.trim().toLowerCase();
+      
+      // Test the function first, then use AI service
+      console.log('Testing Supabase Edge Function...');
+      
+      try {
+        const functionUrl = `https://jvjqfolccxfryxkepnbf.supabase.co/functions/v1/make-server-69bb737c`;
+        
+        console.log('Making request to:', functionUrl);
+        console.log('Request payload:', { preferences: normalizedPreferences, category, baseRecipe });
+
+        const response = await fetch(functionUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken || publicAnonKey}`,
+            // Add CORS headers just in case
+            'Origin': window.location.origin
+          },
+          body: JSON.stringify({
+            preferences: normalizedPreferences,
+            category,
+            baseRecipe
+          })
+        });
+
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('API Error Response:', errorText);
+          throw new Error(`API request failed with status ${response.status}: ${errorText}`);
+        }
+
+        const result = await response.json();
+        console.log('Parsed response:', result);
+
+        if (result && result.success && result.recipe) {
+          onRecipeGenerated(result.recipe);
+          setPreferences("");
+          setShowPanel(false);
+          return; // Success - exit early
+        } else {
+          console.warn('AI service returned invalid response, using fallback');
+          if (result?.error) {
+            console.error('API error:', result.error);
+          }
+        }
+      } catch (apiError) {
+        console.error('API call failed:', apiError);
+        console.log('Falling back to enhanced custom recipe');
+      }
+      
+      // Fallback: Create an enhanced custom recipe based on preferences
+      const customRecipe: CoffeeRecipe = {
+        ...baseRecipe,
+        id: `custom-${Date.now()}`,
+        name: `Custom ${baseRecipe.name}`,
+        description: enhanceDescriptionWithPreferences(baseRecipe.description, normalizedPreferences),
+        tags: [...(baseRecipe.tags || []), 'custom', getPreferenceTag(normalizedPreferences)]
+      };
+      
+      onRecipeGenerated(customRecipe);
+      setPreferences("");
+      setShowPanel(false);
     } catch (error) {
       console.error('Error generating custom recipe:', error);
-      setError('Failed to generate custom recipe. Please try again.');
+      
+      // Provide more specific error messages
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        setError('Network error: Unable to connect to the AI service. Please check your connection and try again.');
+      } else if (error instanceof Error) {
+        setError(`Failed to generate custom recipe: ${error.message}`);
+      } else {
+        setError('Failed to generate custom recipe. Please try again.');
+      }
     } finally {
       setIsGenerating(false);
     }

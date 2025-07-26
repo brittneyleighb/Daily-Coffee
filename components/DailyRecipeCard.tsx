@@ -85,7 +85,7 @@ export function DailyRecipeCard({ recipe, user, accessToken, onAuthRequired }: D
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto p-8 shadow-lg">
+    <Card className="w-full max-w-md mx-auto p-6 shadow-sm bg-white border border-gray-100">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">

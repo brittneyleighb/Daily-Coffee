@@ -8,7 +8,6 @@ import { getTodaysRecipe, CoffeeRecipe, getRecipesByCategory } from "./data/coff
 import { Button } from "./components/ui/button";
 import { Dice6, Calendar, User, LogOut, Heart } from "lucide-react";
 import { supabase } from "./utils/supabase/client";
-import { projectId } from "./utils/supabase/info";
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState<'brewing' | 'espresso'>('brewing');
@@ -64,7 +63,7 @@ export default function App() {
         }
       });
       
-      const result = await response.json();
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_FUNCTION_URL}/make-server-69bb737c/favorites`, {
       if (result.success) {
         setFavorites(result.favorites);
       }

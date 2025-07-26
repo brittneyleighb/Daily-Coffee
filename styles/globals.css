@@ -2,144 +2,149 @@
 @tailwind components;
 @tailwind utilities;
 
-import React from 'react';
+:root {
+  --font-size: 14px;
+  --background: #ffffff;
+  --foreground: oklch(0.145 0 0);
+  --card: #ffffff;
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #030213;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.95 0.0058 264.53);
+  --secondary-foreground: #030213;
+  --muted: #ececf0;
+  --muted-foreground: #717182;
+  --accent: #e9ebef;
+  --accent-foreground: #030213;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: transparent;
+  --input-background: #f3f3f5;
+  --switch-background: #cbced4;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: #030213;
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
 
-const CoffeeRecipe = () => {
-  return (
-    <div className="min-h-screen bg-background py-8 px-4">
-      {/* Header */}
-      <div className="flex justify-between items-center max-w-4xl mx-auto mb-8">
-        <div className="flex items-center gap-2">
-          <span className="text-lg">☆</span>
-          <span className="text-muted-foreground">AI Custom Recipe</span>
-        </div>
-        <button className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-          <span>👤</span>
-          <span>Sign In</span>
-        </button>
-      </div>
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
 
-      {/* Main Content Container */}
-      <div className="max-w-2xl mx-auto">
-        {/* Title Section */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="text-2xl">☕</span>
-            <span className="text-primary font-medium">Daily Coffee Recipe</span>
-          </div>
-          <p className="text-muted-foreground text-sm">Saturday, July 26, 2025</p>
-        </div>
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
 
-        {/* Navigation Tags */}
-        <div className="flex justify-center gap-2 mb-8">
-          <span className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium">
-            ⚡ Brewing Methods
-          </span>
-          <span className="bg-muted text-muted-foreground px-4 py-2 rounded-full text-sm">
-            ⚡ Espresso Drinks
-          </span>
-        </div>
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 
-        {/* Recipe Card */}
-        <div className="bg-card rounded-lg shadow-sm border border-border p-6 mb-6">
-          {/* Recipe Header */}
-          <div className="flex items-start justify-between mb-6">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-muted rounded flex items-center justify-center">
-                <span className="text-muted-foreground">📄</span>
-              </div>
-              <div>
-                <h1 className="text-2xl font-medium text-foreground mb-1">French Press</h1>
-                <p className="text-muted-foreground text-sm">Rich, full-bodied coffee with deep, complex flavors</p>
-              </div>
-            </div>
-            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-              Easy
-            </span>
-          </div>
+/**
+ * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
+ */
+@layer base {
+  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+    h1 {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
 
-          {/* Tags */}
-          <div className="flex gap-2 mb-6">
-            <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm">#rich</span>
-            <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm">#full-bodied</span>
-            <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm">#immersion</span>
-          </div>
+    h2 {
+      font-size: var(--text-xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
 
-          {/* Brew Time */}
-          <div className="flex items-center gap-2 mb-6">
-            <span className="text-muted-foreground">⏰</span>
-            <span className="text-muted-foreground text-sm">Brew time: 4 minutes</span>
-          </div>
+    h3 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
 
-          {/* Save and Share buttons */}
-          <div className="flex gap-3 mb-8">
-            <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
-              <span>🤍</span>
-              <span className="text-sm font-medium">Save</span>
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
-              <span>📤</span>
-              <span className="text-sm font-medium">Share</span>
-            </button>
-          </div>
+    h4 {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
 
-          {/* Ingredients */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium text-foreground mb-4">Ingredients</h2>
-            <ul className="space-y-2">
-              <li className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-muted-foreground rounded-full"></span>
-                <span className="text-foreground">30g coarsely ground coffee</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-muted-foreground rounded-full"></span>
-                <span className="text-foreground">500ml hot water (200°F/93°C)</span>
-              </li>
-            </ul>
-          </div>
+    p {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
 
-          {/* Instructions */}
-          <div>
-            <h2 className="text-lg font-medium text-foreground mb-4">Instructions</h2>
-            <ol className="space-y-3">
-              <li className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">1</span>
-                <span className="text-foreground">Add coffee grounds to French press</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">2</span>
-                <span className="text-foreground">Pour hot water over grounds, stir gently</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">3</span>
-                <span className="text-foreground">Place plunger on top, don't press yet</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">4</span>
-                <span className="text-foreground">Steep for 4 minutes</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">5</span>
-                <span className="text-foreground">Press plunger down slowly and serve</span>
-              </li>
-            </ol>
-          </div>
-        </div>
+    label {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
 
-        {/* Sign in CTA */}
-        <div className="text-center mb-8">
-          <p className="text-muted-foreground text-sm mb-4">
-            Sign in to save your favorite recipes and get personalized recommendations!
-          </p>
-        </div>
+    button {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
 
-        {/* Footer */}
-        <div className="text-center text-muted-foreground text-sm">
-          <p className="mb-2">Today's brewing method • AI-powered customization • Save your favorites</p>
-        </div>
-      </div>
-    </div>
-  );
-};
+    input {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+  }
+}
 
-export default CoffeeRecipe;
+html {
+  font-size: var(--font-size);
+}

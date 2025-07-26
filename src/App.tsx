@@ -114,13 +114,13 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4">
-      <div className="max-w-md mx-auto">
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-xl mx-auto space-y-6">
         {/* User Account Section */}
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end">
           {user ? (
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-gray-600">
                 Welcome, {user.user_metadata?.name || user.email}!
               </span>
               <Button variant="ghost" size="sm" className="flex items-center gap-1">
@@ -144,21 +144,19 @@ export default function App() {
           )}
         </div>
 
-        <div className="flex flex-col items-center space-y-6">
-          <DailyHeader category={activeCategory} />
-          
-          <CategoryToggle 
-            activeCategory={activeCategory}
-            onCategoryChange={handleCategoryChange}
-          />
+        <DailyHeader category={activeCategory} />
+        
+        <CategoryToggle 
+          activeCategory={activeCategory}
+          onCategoryChange={handleCategoryChange}
+        />
 
-          <AICustomizer 
-            onRecipeGenerated={handleAIRecipeGenerated}
-            category={activeCategory}
-            user={user}
-            accessToken={accessToken}
-          />
-        </div>
+        <AICustomizer 
+          onRecipeGenerated={handleAIRecipeGenerated}
+          category={activeCategory}
+          user={user}
+          accessToken={accessToken}
+        />
 
         {isCustomRecipe && (
           <div className="flex justify-center gap-2 mb-6">
@@ -183,31 +181,20 @@ export default function App() {
           </div>
         )}
 
-        <div className="flex justify-center px-4">
-          <div className="w-full max-w-md">
-            <DailyRecipeCard 
-              recipe={currentRecipe} 
-              user={user}
-              accessToken={accessToken}
-              onAuthRequired={() => setShowAuthModal(true)}
-            />
-          </div>
-        </div>
+        <DailyRecipeCard 
+          recipe={currentRecipe} 
+          user={user}
+          accessToken={accessToken}
+          onAuthRequired={() => setShowAuthModal(true)}
+        />
         
-        {/* Enhanced Footer */}
-        <div className="text-center mt-12 space-y-2">
-          <p className="text-sm text-muted-foreground">
-            {isCustomRecipe 
-              ? `Custom ${activeCategory === 'brewing' ? 'brewing method' : 'espresso drink'} just for you`
-              : `Today's ${activeCategory === 'brewing' ? 'brewing method' : 'espresso drink'}`
-            }
-          </p>
-          <div className="flex justify-center gap-4 text-xs text-muted-foreground">
-            <span>• Discover new flavors daily</span>
-            <span>• AI-powered customization</span>
-            <span>• Save your favorites</span>
-          </div>
-        </div>
+        {/* Footer */}
+        <p className="text-center text-xs text-gray-400">
+          {isCustomRecipe 
+            ? `Custom ${activeCategory === 'brewing' ? 'brewing method' : 'espresso drink'} just for you`
+            : `Today's ${activeCategory === 'brewing' ? 'brewing method' : 'espresso drink'}`
+          } • AI-powered customization • Save your favorites
+        </p>
 
         <AuthModal
           isOpen={showAuthModal}

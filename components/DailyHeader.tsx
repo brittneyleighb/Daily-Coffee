@@ -18,12 +18,12 @@ export function DailyHeader({ category = 'brewing' }: DailyHeaderProps) {
   const title = isEspresso ? 'Daily Espresso Recipe' : 'Daily Coffee Recipe';
 
   return (
-    <div className="text-center mb-8">
-      <div className="flex items-center justify-center gap-2 mb-2">
-        <Icon className="w-6 h-6 text-primary" />
-        <h2 className="text-muted-foreground">{title}</h2>
-      </div>
-      <p className="text-sm text-muted-foreground">{formattedDate}</p>
+    <div className="text-center">
+      <h1 className="text-2xl font-semibold flex items-center justify-center gap-2">
+        <Icon className="w-6 h-6" />
+        {title}
+      </h1>
+      <p className="text-gray-600">{formattedDate}</p>
     </div>
   );
 }

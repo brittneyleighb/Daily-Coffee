@@ -14,26 +14,14 @@
     "@supabase/supabase-js": "^2.49.8"
   },
   "devDependencies": {
-    "vite": "^4.4.9",
+    "vite": "^5.0.0",
     "@vitejs/plugin-react": "^4.0.0",
     "typescript": "^5.2.2"
   },
   "author": "Brittney Leigh",
-<<<<<<< HEAD
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/brittneyleighb/Daily-Coffee/issues"
   },
-  "homepage": "https://github.com/brittneyleighb/Daily-Coffee#readme",
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "vite": "^5.0.0"
-  }
-=======
-  "license": "MIT"
->>>>>>> 8f1819e (Ready for deployment)
+  "homepage": "https://github.com/brittneyleighb/Daily-Coffee#readme"
 }
-

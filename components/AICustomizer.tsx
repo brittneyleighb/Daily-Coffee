@@ -30,7 +30,7 @@ export function AICustomizer({ onRecipeGenerated, category, user, accessToken }:
 
       const normalizedPreferences = preferences.trim().toLowerCase();
 
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-69bb737c/generate-recipe`, {
+      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-69bb737c`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

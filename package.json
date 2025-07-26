@@ -1,0 +1,25 @@
+{
+  "name": "daily-coffee",
+  "version": "1.0.0",
+  "description": "A daily coffee and espresso recipe app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brittneyleighb/Daily-Coffee.git"
+  },
+  "keywords": [
+    "coffee",
+    "espresso",
+    "recipes",
+    "react"
+  ],
+  "author": "Brittney Leigh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brittneyleighb/Daily-Coffee/issues"
+  },
+  "homepage": "https://github.com/brittneyleighb/Daily-Coffee#readme"
+}

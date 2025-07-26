@@ -59,16 +59,18 @@ export const coffeeRecipes: CoffeeRecipe[] = [
   // ... Remaining recipes with "id" fields as strings for uniqueness ...
 ];
 
-// Function to get today's recipe
+// Function to get a random recipe
 export function getTodaysRecipe(category?: 'brewing' | 'espresso'): CoffeeRecipe {
-  const filteredRecipes = category ? coffeeRecipes.filter(recipe => recipe.category === category) : coffeeRecipes;
-  const today = new Date();
-  const start = new Date(today.getFullYear(), 0, 0);
-  const diff = today.getTime() - start.getTime();
-  const oneDay = 1000 * 60 * 60 * 24;
-  const dayOfYear = Math.floor(diff / oneDay);
-  const recipeIndex = dayOfYear % filteredRecipes.length;
-  return filteredRecipes[recipeIndex];
+  const filteredRecipes = category
+    ? coffeeRecipes.filter(recipe => recipe.category === category)
+    : coffeeRecipes;
+
+  if (filteredRecipes.length === 0) {
+    throw new Error(`No recipes found for category: ${category}`);
+  }
+
+  const randomIndex = Math.floor(Math.random() * filteredRecipes.length);
+  return filteredRecipes[randomIndex];
 }
 
 // Function to get recipes by category
